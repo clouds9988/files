@@ -63,6 +63,16 @@
     animation: pulse 2.4s ease-in-out infinite;
   }
 
+  .status-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80, 0 0 16px rgba(74,222,128,0.6);
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.35; }
@@ -444,9 +454,163 @@
   }
 
   .wrap { position: relative; z-index: 1; }
+  /* Auth gate */
+  #authGate {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(201,182,255,0.10), transparent 70%);
+  }
+
+  #authGate.hidden { display: none; }
+
+  .auth-card {
+    width: 100%;
+    max-width: 360px;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 32px 28px;
+    margin: 0 20px;
+  }
+
+  .auth-card h2 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .auth-card .auth-sub {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .auth-field {
+    margin-bottom: 14px;
+  }
+
+  .auth-field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .auth-field input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .auth-field input:focus {
+    border-color: var(--glow-dim);
+  }
+
+  .auth-submit {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bg);
+    background: var(--glow);
+    border: none;
+    padding: 11px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin-top: 6px;
+    box-shadow: 0 0 20px -4px rgba(201,182,255,0.6);
+    transition: background 0.2s ease;
+  }
+
+  .auth-submit:hover { background: var(--cyan); }
+
+  .auth-toggle {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .auth-toggle a {
+    color: var(--glow);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .auth-toggle a:hover { text-decoration: underline; }
+
+  .auth-error {
+    color: #f38ba8;
+    font-size: 12.5px;
+    text-align: center;
+    margin-top: 12px;
+    min-height: 16px;
+  }
+
+  #signOutBtn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    background: none;
+    border: 1px solid var(--line);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  #signOutBtn:hover {
+    color: var(--text);
+    border-color: var(--glow-dim);
+  }
+
+  .site-hidden { display: none; }
 </style>
 </head>
 <body>
+
+<div id="authGate">
+  <div class="auth-card">
+    <h2 id="authTitle">Sign in</h2>
+    <p class="auth-sub" id="authSub">Enter your account to view downloads</p>
+    <form id="authForm">
+      <div class="auth-field">
+        <label for="authEmail">Email</label>
+        <input type="email" id="authEmail" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" required autocomplete="current-password" minlength="6">
+      </div>
+      <button type="submit" class="auth-submit" id="authSubmitBtn">Sign in</button>
+      <div class="auth-error" id="authError"></div>
+    </form>
+    <div class="auth-toggle">
+      <span id="authToggleText">Don't have an account?</span>
+      <a id="authToggleLink">Sign up</a>
+    </div>
+  </div>
+</div>
+
+<div id="siteContent" class="site-hidden">
 <div class="mouse-glow" id="mouseGlow"></div>
 <div class="wrap">
 
@@ -455,9 +619,14 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--glow);">
         <path d="M17.5 19H9a5 5 0 1 1 1.9-9.6 6 6 0 0 1 11.1 3.3A4.5 4.5 0 0 1 17.5 19Z"/>
       </svg>
-      itzc1ouds.com
     </span>
-    <span>status: online</span>
+    <span style="display:flex; align-items:center; gap:14px;">
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span class="status-dot"></span>
+        status: online
+      </span>
+      <button id="signOutBtn">Sign out</button>
+    </span>
   </header>
 
   <div class="hero">
@@ -554,16 +723,118 @@
     </div>
   </div>
 
-  <div class="notes">
-    <strong>Heads up:</strong> match the file to your Minecraft version, or it won't load. Files are served directly from the GitHub release — nothing is hosted or modified by this page.
-  </div>
-
   <footer>
-    <span>maintained by clouds9988</span>
+    <span>maintained by itzc1ouds</span>
     <a href="https://github.com/clouds9988/files/releases/tag/67" target="_blank" rel="noopener">view on GitHub →</a>
   </footer>
 
 </div>
+</div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC6zXrCsxPLcxB_OQiioniixKb-vDg8ggg",
+    authDomain: "mods-22ee6.firebaseapp.com",
+    projectId: "mods-22ee6",
+    storageBucket: "mods-22ee6.firebasestorage.app",
+    messagingSenderId: "104834881554",
+    appId: "1:104834881554:web:2d3fca363bfa5c697f60cb",
+    measurementId: "G-RH50S58WCL"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const authGate = document.getElementById('authGate');
+  const siteContent = document.getElementById('siteContent');
+  const authForm = document.getElementById('authForm');
+  const authEmail = document.getElementById('authEmail');
+  const authPassword = document.getElementById('authPassword');
+  const authError = document.getElementById('authError');
+  const authTitle = document.getElementById('authTitle');
+  const authSub = document.getElementById('authSub');
+  const authSubmitBtn = document.getElementById('authSubmitBtn');
+  const authToggleText = document.getElementById('authToggleText');
+  const authToggleLink = document.getElementById('authToggleLink');
+  const signOutBtn = document.getElementById('signOutBtn');
+
+  let mode = 'signin'; // or 'signup'
+
+  function setMode(newMode) {
+    mode = newMode;
+    authError.textContent = '';
+    if (mode === 'signin') {
+      authTitle.textContent = 'Sign in';
+      authSub.textContent = 'Enter your account to view downloads';
+      authSubmitBtn.textContent = 'Sign in';
+      authToggleText.textContent = "Don't have an account?";
+      authToggleLink.textContent = 'Sign up';
+    } else {
+      authTitle.textContent = 'Create account';
+      authSub.textContent = 'Sign up to get access to downloads';
+      authSubmitBtn.textContent = 'Sign up';
+      authToggleText.textContent = 'Already have an account?';
+      authToggleLink.textContent = 'Sign in';
+    }
+  }
+
+  authToggleLink.addEventListener('click', () => {
+    setMode(mode === 'signin' ? 'signup' : 'signin');
+  });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    authError.textContent = '';
+    authSubmitBtn.disabled = true;
+    const email = authEmail.value.trim();
+    const password = authPassword.value;
+    try {
+      if (mode === 'signin') {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        await createUserWithEmailAndPassword(auth, email, password);
+      }
+    } catch (err) {
+      authError.textContent = friendlyError(err.code);
+    } finally {
+      authSubmitBtn.disabled = false;
+    }
+  });
+
+  signOutBtn.addEventListener('click', () => {
+    signOut(auth);
+  });
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      authGate.classList.add('hidden');
+      siteContent.classList.remove('site-hidden');
+    } else {
+      authGate.classList.remove('hidden');
+      siteContent.classList.add('site-hidden');
+    }
+  });
+
+  function friendlyError(code) {
+    switch (code) {
+      case 'auth/email-already-in-use': return 'That email already has an account — try signing in instead.';
+      case 'auth/invalid-email': return 'That email address looks invalid.';
+      case 'auth/weak-password': return 'Password should be at least 6 characters.';
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential': return 'Incorrect email or password.';
+      default: return 'Something went wrong — try again.';
+    }
+  }
+</script>
 <script>
   const glow = document.getElementById('mouseGlow');
   let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
