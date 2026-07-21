@@ -137,6 +137,53 @@
     border-radius: 4px;
   }
 
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin: 48px 0 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .tab-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    padding: 10px 4px 14px;
+    cursor: pointer;
+    position: relative;
+    letter-spacing: 0.02em;
+    transition: color 0.2s ease;
+  }
+
+  .tab-btn + .tab-btn { margin-left: 24px; }
+
+  .tab-btn::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 2px;
+    background: transparent;
+    transition: background 0.2s ease;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+
+  .tab-btn.active {
+    color: var(--glow);
+  }
+
+  .tab-btn.active::after {
+    background: var(--glow);
+    box-shadow: 0 0 8px var(--glow);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
   /* Section label */
   .section-label {
     font-family: 'JetBrains Mono', monospace;
@@ -296,28 +343,57 @@
     <p class="subhead">Downloads for the community. Grab the build that matches your Minecraft version and you're set.</p>
   </div>
 
-  <div class="section-label">Releases</div>
-
-  <div class="release latest">
-    <div class="release-info">
-      <div class="release-name">krypton-1.21.11.jar <span class="tag">Latest</span></div>
-      <div class="release-meta">For Minecraft 1.21.11 · Fabric</div>
-    </div>
-    <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/krypton-1.21.11.jar" download>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
-      Download
-    </a>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="prestige">Prestige</button>
+    <button class="tab-btn" data-tab="krypton">Krypton</button>
   </div>
 
-  <div class="release">
-    <div class="release-info">
-      <div class="release-name">krypton-1.21.10.jar</div>
-      <div class="release-meta">For Minecraft 1.21.10 · Fabric</div>
+  <div class="section-label">Releases</div>
+
+  <div class="tab-panel active" id="panel-prestige">
+    <div class="release latest">
+      <div class="release-info">
+        <div class="release-name">prestige-1.21.11.jar <span class="tag">Latest</span></div>
+        <div class="release-meta">Prestige Client · Minecraft 1.21.11</div>
+      </div>
+      <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/prestige-1.21.11.jar" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download
+      </a>
     </div>
-    <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/krypton-1.21.10.jar" download>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
-      Download
-    </a>
+    <div class="release">
+      <div class="release-info">
+        <div class="release-name">prestige-1.21.10.jar</div>
+        <div class="release-meta">Prestige Client · Minecraft 1.21.10</div>
+      </div>
+      <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/prestige-1.21.10.jar" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download
+      </a>
+    </div>
+  </div>
+
+  <div class="tab-panel" id="panel-krypton">
+    <div class="release latest">
+      <div class="release-info">
+        <div class="release-name">krypton-1.21.11.jar <span class="tag">Latest</span></div>
+        <div class="release-meta">For Minecraft 1.21.11 · Fabric</div>
+      </div>
+      <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/krypton-1.21.11.jar" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download
+      </a>
+    </div>
+    <div class="release">
+      <div class="release-info">
+        <div class="release-name">krypton-1.21.10.jar</div>
+        <div class="release-meta">For Minecraft 1.21.10 · Fabric</div>
+      </div>
+      <a class="dl-btn" href="https://github.com/clouds9988/files/releases/download/files/krypton-1.21.10.jar" download>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"/></svg>
+        Download
+      </a>
+    </div>
   </div>
 
   <div class="notes">
@@ -330,5 +406,15 @@
   </footer>
 
 </div>
+<script>
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
 </body>
 </html>
