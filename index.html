@@ -322,9 +322,27 @@
   @media (prefers-reduced-motion: reduce) {
     .tube-gas, header .dot { animation: none; }
   }
+
+  /* Mouse-follow glow */
+  .mouse-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 600px;
+    height: 600px;
+    pointer-events: none;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,182,255,0.16) 0%, rgba(201,182,255,0.06) 35%, transparent 70%);
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    will-change: transform;
+  }
+
+  .wrap { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+<div class="mouse-glow" id="mouseGlow"></div>
 <div class="wrap">
 
   <header>
@@ -407,6 +425,25 @@
 
 </div>
 <script>
+  const glow = document.getElementById('mouseGlow');
+  let targetX = window.innerWidth / 2, targetY = window.innerHeight / 2;
+  let curX = targetX, curY = targetY;
+
+  window.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+  });
+
+  function animateGlow() {
+    curX += (targetX - curX) * 0.12;
+    curY += (targetY - curY) * 0.12;
+    if (glow) glow.style.transform = `translate(${curX - 300}px, ${curY - 300}px)`;
+    requestAnimationFrame(animateGlow);
+  }
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    animateGlow();
+  }
+
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
