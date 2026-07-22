@@ -279,6 +279,13 @@
     border: 1px solid var(--line);
     border-radius: 10px;
     padding: 20px;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(201,182,255,0.4);
+    box-shadow: 0 0 0 1px rgba(201,182,255,0.1), 0 0 28px -6px rgba(201,182,255,0.45);
+    transform: translateY(-2px);
   }
 
   .feature-card h3 {
